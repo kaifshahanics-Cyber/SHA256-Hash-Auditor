@@ -1,41 +1,45 @@
 import hashlib
-import time
 
-# Generate the baseline SHA-256 target hash from user input
-target_password = input("Enter a password to generate its target hash: ")
-encoded_target = target_password.encode("utf-8")
-target_hash = hashlib.sha256(encoded_target).hexdigest()
+print("--- Simple SHA-256 Hash Cracker ---")
+user_pass = input("Enter a password to make its hash: ")
 
-print(f"\n[*] Target SHA-256 Hash: {target_hash}")
-print("[*] Initiating dictionary attack sequence...\n")
+# converting password to bytes and then hashing it
+pass_bytes = user_pass.encode("utf-8")
+target_hash = hashlib.sha256(pass_bytes).hexdigest()
+
+print("Your target hash is:", target_hash)
+print("Starting the dictionary attack now...")
 
 try:
-    # Context manager for memory-efficient I/O; ignores malformed bytes in large datasets
-    with open("wordlist.txt", "r", encoding="utf-8", errors="ignore") as file:
-        print("[*] Dataset loaded into buffer. Commencing brute force...\n")
+    file = open("wordlist.txt", "r") # basic file opening
+    
+    attempt_count = 0
+    password_found = False
+    
+    for line in file:
+        current_word = line.strip()
+        attempt_count = attempt_count + 1
         
-        attempt_counter = 0 
+        # making hash of the current word from our file
+        word_bytes = current_word.encode("utf-8")
+        word_hash = hashlib.sha256(word_bytes).hexdigest()
         
-        for line in file:
-            guess = line.strip() 
-            attempt_counter += 1
+        # showing progress after every 5000 tries so screen doesn't hang
+        if attempt_count % 5000 == 0:
+            print("Still checking... tried", attempt_count, "words")
+        
+        # checking if we found the match
+        if word_hash == target_hash:
+            print("\nSuccess! Password found in the list.")
+            print("Total tries:", attempt_count)
+            print("The cracked password is:", current_word)
+            password_found = True
+            break
             
-            # Dynamic stream throttling: updates CLI every 10,000 iterations to prevent I/O bottlenecks
-            if attempt_counter % 10000 == 0:
-                print(f"\r[*] Iterations: {attempt_counter:,} | Evaluating: {guess[:12]:<12}", end="")
-            
-            # Cryptographic transformation and state evaluation
-            encoded_guess = guess.encode("utf-8")
-            guess_hash = hashlib.sha256(encoded_guess).hexdigest()
-
-            if guess_hash == target_hash:
-                print("\n\n[+] CRYPTOGRAPHIC MATCH FOUND")
-                print(f"[+] Total attempts evaluated: {attempt_counter:,}")
-                print(f"[+] Decrypted plaintext: {guess}\n")
-                break
-        else:
-            print("\n\n[-] ATTACK COMPLETE")
-            print("[-] Dataset exhausted. Target hash remains unbroken.")
-
+    file.close()
+    
+    if password_found == False:
+        print("\nAttack finished. Password was not in the wordlist.")
+        
 except FileNotFoundError:
-    print("\n[!] CRITICAL ERROR: 'wordlist.txt' missing from the execution directory.")
+    print("Error: Could not find the wordlist.txt file. Please check the folder.")
