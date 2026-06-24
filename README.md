@@ -1,52 +1,20 @@
-# SHA256 Hash Auditor
+# Simple SHA-256 Hash Cracker
 
-> A memory-efficient Python utility for evaluating SHA-256 cryptographic hashes via dynamic stream-processed dictionary attacks.
+Hello! I am a second year Computer Science student deeply passionate about cybersecurity and ethical hacking. This repository contains one of my first practical security projects. 
 
-## Overview
-SHA256 Hash Auditor is a lightweight, strictly terminal-based cryptographic utility developed in Python. It is designed to perform dictionary-based brute-force attacks against target SHA-256 hashes. The tool emphasizes memory efficiency and I/O optimization, making it capable of processing massive datasets (e.g., RockYou.txt) without causing system bottlenecking or memory overflow.
+Instead of using automated tools, I built this simple dictionary attack simulator to understand how password auditing works under the hood. My main focus was to write clean, understandable logic and learn how to handle files safely in Python.
 
-## Core Features
-* **Memory-Safe Execution:** Utilizes dynamic stream processing (`for line in file:`) to read datasets line-by-line, ensuring the system RAM remains stable regardless of the wordlist size.
-* **I/O Throttling:** Implements a custom modulus-based terminal refresh mechanism (updating stdout every 10,000 iterations). This prevents the CLI from bottlenecking CPU cycles, maintaining maximum cryptographic evaluation speed.
-* **Fault Tolerance:** Includes bypass logic (`errors="ignore"`) to silently skip malformed bytes or non-UTF-8 characters commonly found in large, raw data dumps.
-* **No Dependencies:** Built entirely using Python's standard libraries (`hashlib`, `time`). No external modules or packages are required.
+## 🛠️ What I Learned Building This
 
-## Prerequisites
-* Python 3.x installed on your local machine.
-* A target SHA-256 hash string.
-* A wordlist/dictionary text file (e.g., `wordlist.txt`) placed in the root execution directory.
+* **Safe File Handling:** I learned how to use `open()` and `close()` properly, and how to read a large text file line by line without crashing the computer's memory.
+* **Error Prevention:** I added basic `try...except` blocks. If the user forgets to add the `wordlist.txt` file, the program gives a polite error message instead of throwing a massive system error.
+* **Basic Cryptography:** I learned how to convert regular text into byte format (`.encode()`) and hash it using Python's native `hashlib` library.
+* **Progress Tracking:** I used a simple mathematical modulo (`%`) logic to print a "still checking" message every 5,000 tries, so the user knows the program is not frozen.
 
-## Usage
+## 🚀 How to Run It
 
-1. Clone the repository to your local machine:
+1. Make sure you have Python installed on your computer.
+2. Create a plain text file named `wordlist.txt` in the same folder as the script and put some guess words in it.
+3. Open your terminal or command prompt and run:
 ```bash
-   git clone [https://github.com/YourUsername/SHA256-Hash-Auditor.git](https://github.com/YourUsername/SHA256-Hash-Auditor.git)
-   ```
-
-2. Navigate to the directory:
-```bash
-   cd SHA256-Hash-Auditor
-   ```
-
-3. Ensure your dictionary file is named `wordlist.txt` and is present in the same directory as the script.
-
-4. Execute the script:
-```bash
-   python main.py
-   ```
-
-5. When prompted, enter the plaintext target to generate its hash, and the tool will automatically commence the dictionary evaluation against the dataset.
-
-## Logic Blueprint
-The script operates on the following workflow:
-1. Captures target data and generates the baseline SHA-256 hash.
-2. Opens the specified dataset using a secure context manager.
-3. Iterates through the file sequentially, generating a fresh SHA-256 hash for each parsed line.
-4. Evaluates the generated hash against the baseline target.
-5. Halts execution immediately upon a successful cryptographic match or gracefully exits upon reaching EOF (End of File).
-
-## Disclaimer
-This script is developed strictly for educational purposes, cryptographic research, and authorized security auditing. The author is not responsible for any misuse or illegal activities conducted with this tool. Always ensure you have explicit permission before testing against infrastructure or data that you do not own.
-
-## Author
-**Muhammad Kaif Shahani**
+   python hasher_cracker.py
